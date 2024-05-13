@@ -4,6 +4,7 @@ import Messages from './Messages';
 // Library for real-time bidirectional event-based communication.
 import io from 'socket.io-client';  
 
+
 // Establishes a connection to a Socket.IO server running locally on port 9000.
 const socket = io.connect('http://localhost:9000');
 
@@ -17,27 +18,27 @@ const Chat = () => {
   // State variable to hold an array of messages.
   const [messages, setMessages] = useState([]);
 
-  // const handleSubmit = async e => {
-  //   e.preventDefault();
-  //   const storedJWT = localStorage.getItem('token');
-  //   try {
-  //     const response = await fetch('http://localhost:8080/api/messages', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: `Bearer ${storedJWT}`,
-  //       },
-  //       body: JSON.stringify({ message: messageText }), // Changed "uploads" to "message"
-  //     });
-  //     if (!response.ok) {
-  //       throw new Error('Error sending message');
-  //     }
-  //     setMessageText('');
-  //   } catch (error) {
-  //     console.error('Error:', error);
-  //     // Handle the error (display a message to the user)
-  //   }
-  // };
+  const handleSubmit = async e => {
+    e.preventDefault();
+    const storedJWT = localStorage.getItem('token');
+    try {
+      const response = await fetch('http://localhost:8080/api/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${storedJWT}`,
+        },
+        body: JSON.stringify({ message: messageText }), // Changed "uploads" to "message"
+      });
+      if (!response.ok) {
+        throw new Error('Error sending message');
+      }
+      setMessageText('');
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle the error (display a message to the user)
+    }
+  };
 
   // Function to join a room.
   const joinRoom = () => {
@@ -81,12 +82,11 @@ const Chat = () => {
     <div className="chat">
       <div className="chatInfo">
         <span>Jane</span>
-        <div className="chatIcons">
+        {/* <div className="chatIcons">
           <FaHeadset />
           <FaUserPlus />
-        </div>
+        </div> */}
       </div>
-      // Render the messages component with the messages array.
       <Messages messages={messages} />
       <div className="input">
         <input
@@ -104,7 +104,9 @@ const Chat = () => {
             setMessageText(event.target.value);
           }}
         />
+      
         <button onClick={sendMessage}>Send Message</button>
+
       </div>
     </div>
   );

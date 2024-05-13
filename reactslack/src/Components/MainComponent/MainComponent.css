@@ -95,23 +95,23 @@
 
   .container {
     display: flex;
-    flex: 1; /* Fill remaining space */
+    flex: 1;
     border: 1px solid white;
     border-radius: 10px;
     width: 65%;
     height: 100%;
-    overflow: hidden; /* Hide overflowing content */
+    overflow: hidden;
     @include tablet {
       width: 90%;
     }
     .right-sidebar {
       flex: 1;
-      background-color: #3e3c61;
+      background-color: #72d5e2;
       position: relative;
     }
     .sidebar {
       flex: 1;
-      background-color: #3e3c61;
+      background-color: #72d5e2;
       position: relative;
 
       .navbar {

@@ -5,7 +5,7 @@ const Message = ({ msg }) => {
   return (
     <div className="message">
       <div className="messageInfo">
-        <img src={Jane} alt="" />
+        {/* <img src={Jane} alt="" /> */}
         <span>just now</span>
       </div>
       <div className="messageContent">
