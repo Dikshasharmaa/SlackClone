@@ -3,6 +3,7 @@ import { FaHeadset, FaUserPlus } from 'react-icons/fa';
 import Messages from './Messages';
 // Library for real-time bidirectional event-based communication.
 import io from 'socket.io-client';
+import { set } from 'lodash';
 let currentChannelName = '';
 
 // Establishes a connection to a Socket.IO server running locally on port 9000.
@@ -18,14 +19,27 @@ const Chat = () => {
   // State variable to hold an array of messages.
   const [messages, setMessages] = useState([]);
   // Function to join a room.
-  const joinRoom = async (roomNo, roomName) => {
-    setRoom(roomNo);
+  const joinRoom = async () => {
     if (room.trim() !== '') {
-      currentChannelName = roomName;
+      setMessages([]);
+      const token = localStorage.getItem('token');
+
+      const channelInfo = await fetch(`http://localhost:8080/api/channels/${room}`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      if (!channelInfo.ok) {
+        throw new Error(`HTTP error! status: ${channelInfo.status}`);
+      }
+      const channelDetails = await channelInfo.json();
+
+      currentChannelName = channelDetails.name;
+
       console.log(localStorage.getItem('authenticatedUsername'));
       // Emit a 'join_room' event to the server with the room number.
       socket.emit('join_room', room);
-      const token = localStorage.getItem('token');
+
       const users = await fetch(`http://localhost:8080/api/admin/users`, {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -57,8 +71,8 @@ const Chat = () => {
         timestamp: msg.timestamp, // replace 'timestamp' with the actual property name in the old message object
       }));
       setMessages(prevMessages => [...prevMessages, ...formattedOldMessages]);
-      // } else {
-      //   alert('Please enter a room number.');
+    } else {
+      alert('Please enter a room number.');
     }
   };
 
@@ -85,7 +99,6 @@ const Chat = () => {
       socket.emit('send_message', { message: messageText.trim(), author, timestamp, room });
       // Post the message to the db
       // const token = localStorage.getItem('token'); //duplicate
-      let roomint = Number(room);
       const response = await fetch('http://localhost:8080/api/messages', {
         method: 'POST',
         headers: {
@@ -98,7 +111,7 @@ const Chat = () => {
           timestamp: timestamp,
           pinned: 0,
           channel: {
-            id: roomint,
+            id: room,
           },
           userProfile: {
             id: userID,
@@ -146,13 +159,13 @@ const Chat = () => {
       </div>
       <Messages messages={messages} />
       <div className="input">
-        {/* <input
+        <input
           placeholder="Room Number..."
           onChange={event => {
             setRoom(event.target.value);
           }}
-        /> */}
-        <button onClick={() => joinRoom('1', 'General')}>Join Room</button>
+        />
+        <button onClick={joinRoom}>Join Room</button>
         <input
           type="text"
           placeholder="Type something"
